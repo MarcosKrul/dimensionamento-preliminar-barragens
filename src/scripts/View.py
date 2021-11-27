@@ -1,5 +1,6 @@
 from PySimpleGUI import PySimpleGUI as sg
 from scripts.Calc import Calc
+from scripts.Plot import Plot
 
 class View:
     def __init__(self) -> None:
@@ -44,7 +45,7 @@ class View:
       self.__window = sg.Window('Dimensionamento de barragens', layout, size=(400, 340))
 
 
-    def update(self):
+    def update(self, showPlot: bool = False):
       calc = Calc(
         altura=self.__value_altura, 
         comprimento=self.__value_comprimento, 
@@ -56,6 +57,15 @@ class View:
       self.__window[self.__key_out_fr].update(f'Intensidade da força: {self.__fr:.2f} N')
       self.__window[self.__key_out_fr_y].update(f'Ordenada (γ) da força resultante: {self.__fr_y:.2f} m')
       self.__window[self.__key_out_largura_base].update(f'Largura da base da barragem: {self.__largura_barragem:.4f} m')
+
+      if showPlot:
+        Plot().render(
+          y_altura=self.__value_altura, 
+          x_pressao=calc.stevin_pressao(), 
+          x_fr=self.__fr, 
+          y_fr=self.__fr_y,
+          base=self.__largura_barragem
+        )
 
 
     def run(self):
@@ -70,9 +80,9 @@ class View:
             self.__value_altura = float(values[self.__key_in_altura])
             self.__value_comprimento = float(values[self.__key_in_comprimento])
             self.__value_peso_especifico = float(values[self.__key_in_peso_especifico])
-            
-            self.update()
-          
+
+            self.update(events == self.__title_btn_plot)
+
           except ValueError:
             sg.popup_error('Apenas valores numéricos são aceitos.')
             continue
