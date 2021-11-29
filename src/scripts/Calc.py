@@ -1,3 +1,4 @@
+import math
 
 class Calc: 
   def __init__(self, altura: float, comprimento: float, peso: float) -> None:
@@ -16,6 +17,10 @@ class Calc:
     return self.__peso_especifico * self.__altura
 
 
+  def stevin_pressao_prof(self, altura) -> float:
+    return self.__peso_especifico * altura
+
+
   # calcular a ordenada (y) do centro de pressoes
   # numericamente igual ao centro de gravidade de um triangulo
   def cp_y(self) -> float:
@@ -23,9 +28,10 @@ class Calc:
 
   
   # calcular a largura minima da barragem
-  # depende da forca resultante na barragem
+  # depende do equilibrio entre o momento da forca do fluido e da forca peso da barragem
   def largura_minima(self, forca: float) -> float:
-    return (2 * forca * self.cp_y()) / (self.__altura * self.__comprimento * self.__peso_especifico_concreto)
+    return math.sqrt((2 * forca * self.cp_y()) / (self.__altura * self.__comprimento * self.__peso_especifico_concreto))
+
 
   # primeiro valor: intensidade da forca resultante
   # segundo valor: ordenada da forca (profundidade)

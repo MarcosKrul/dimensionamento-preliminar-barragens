@@ -36,41 +36,18 @@ class Plot:
       label='Profundidade'
     )
 
-    # altura e base da barragem
-    barragem = patches.Rectangle(
-      (-base, 0),
-      base,
-      y_altura,
-      linewidth=1,
-      color='gray'
-    )
-
-    pyplot.gca().add_patch(barragem)
-
-    # dimensao da base (base)
-    legenda_base, = plt.plot(
-      [-base, 0],
-      [0, 0],
-      color='red',
-      linewidth=1,
-      label='Base',
-      marker='|',
-      markersize=4,
-    )
-
-    # vetor forca resultante
-    legenda_forca_resultante, = plt.plot(
+    # forca resultante
+    plt.plot(
       [0, x_fr],
       [y_fr, y_fr],
       color='black',
       linewidth=1,
-      label='Vetor Força Resultante',
       marker='<',
       markersize=4,
       markevery=[0]
     )
 
-    plt.legend(handles=[legenda_altura, legenda_pressao, legenda_forca_resultante, legenda_base])
+    plt.legend(handles=[legenda_altura, legenda_pressao])
     pyplot.show()
 
 

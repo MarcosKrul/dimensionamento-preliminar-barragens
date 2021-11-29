@@ -1,6 +1,7 @@
 from PySimpleGUI import PySimpleGUI as sg
 from scripts.Calc import Calc
 from scripts.Plot import Plot
+from scripts.Barragem3D import Barragem3D
 
 class View:
     def __init__(self) -> None:
@@ -8,8 +9,9 @@ class View:
       self.__fr_y = 0.0
       self.__largura_barragem = 0.0
 
-      self.__title_btn_calc = 'Calcular força'
+      self.__title_btn_calc = 'Calcular'
       self.__title_btn_plot = 'Visualizar graficamente'
+      self.__title_btn_view_base = 'Visualizar base'
 
       self.__key_in_altura = 'in_altura_barragem'
       self.__key_in_comprimento = 'in_comprimento_barragem'
@@ -40,9 +42,10 @@ class View:
         [sg.Text('', key=self.__key_out_largura_base, font='Arial 12 bold', pad=((0, 0), (5, 0)))],
         [sg.Button(self.__title_btn_calc, size=(80, 1), pad=((80, 80), (25, 0)))],
         [sg.Button(self.__title_btn_plot, size=(80, 1), pad=((80, 80), (15, 0)))],
+        [sg.Button(self.__title_btn_view_base, size=(80, 1), pad=((80, 80), (15, 0)))],
       ]
       
-      self.__window = sg.Window('Dimensionamento de barragens', layout, size=(400, 340))
+      self.__window = sg.Window('Dimensionamento de barragens', layout, size=(400, 380))
 
 
     def update(self, showPlot: bool = False):
@@ -62,7 +65,7 @@ class View:
         Plot().render(
           y_altura=self.__value_altura, 
           x_pressao=calc.stevin_pressao(), 
-          x_fr=self.__fr, 
+          x_fr=calc.stevin_pressao_prof(self.__fr_y), 
           y_fr=self.__fr_y,
           base=self.__largura_barragem
         )
@@ -75,13 +78,16 @@ class View:
         if events == sg.WINDOW_CLOSED: 
           break
 
-        if events == self.__title_btn_calc or events == self.__title_btn_plot:
+        if events == self.__title_btn_calc or events == self.__title_btn_plot or events == self.__title_btn_view_base:
           try:
             self.__value_altura = float(values[self.__key_in_altura])
             self.__value_comprimento = float(values[self.__key_in_comprimento])
             self.__value_peso_especifico = float(values[self.__key_in_peso_especifico])
 
             self.update(events == self.__title_btn_plot)
+
+            if events == self.__title_btn_view_base:
+              Barragem3D(largura=self.__largura_barragem, comprimento=self.__value_comprimento, altura=self.__value_altura).render()
 
           except ValueError:
             sg.popup_error('Apenas valores numéricos são aceitos.')
